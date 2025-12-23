@@ -18,7 +18,9 @@ RUN python -m venv /py && \
     apk add --update --no-cache --virtual .tmp-build-deps \
         build-base \
         mariadb-dev \
-        musl-dev && \
+        musl-dev \
+        openssl-dev \
+        libffi-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ "$DEV" = "true" ]; then \
         /py/bin/pip install -r /tmp/requirements-dev.txt ; \
