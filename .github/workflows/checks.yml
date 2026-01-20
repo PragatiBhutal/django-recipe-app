@@ -20,11 +20,19 @@ jobs:
 
       - name: Grant MySQL permissions
         run: |
-            docker compose up -d db
-            docker compose exec -T db mysql -h 127.0.0.1 -u root -prootpass -e "
-            GRANT ALL PRIVILEGES ON *.* TO 'devuser'@'%';
-            FLUSH PRIVILEGES;
-            "
+          docker compose up -d db
+
+          echo "Waiting for MySQL to be ready..."
+          until docker compose exec -T db mysqladmin ping -h 127.0.0.1 -u root -prootpass --silent; do
+            sleep 2
+          done
+
+          echo "Granting privileges..."
+          docker compose exec -T db mysql -h 127.0.0.1 -u root -prootpass -e "
+          GRANT ALL PRIVILEGES ON *.* TO 'devuser'@'%';
+          FLUSH PRIVILEGES;
+          "
+      
 
       - name: Run Tests
         run: docker compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
