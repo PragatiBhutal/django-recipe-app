@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     build:
@@ -23,7 +21,7 @@ services:
       - db
 
   db:
-    image: mysql:latest
+    image: mysql:8.0
     volumes:
       - dev-db-data:/var/lib/mysql
     environment:
