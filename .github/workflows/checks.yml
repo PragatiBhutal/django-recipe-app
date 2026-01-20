@@ -18,6 +18,14 @@ jobs:
       - name: Build Docker image with dev deps
         run: docker compose build --build-arg DEV=true app
 
+      - name: Grant MySQL permissions
+        run: |
+            docker compose up -d db
+            docker compose exec -T db mysql -u root -prootpass -e "
+            GRANT ALL PRIVILEGES ON *.* TO 'devuser'@'%';
+            FLUSH PRIVILEGES;
+            "
+
       - name: Run Tests
         run: docker compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
 
