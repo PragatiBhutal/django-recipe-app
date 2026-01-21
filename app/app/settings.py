@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'drf_spectacular',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -78,19 +79,30 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 import os
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME'),     # devdb
-        'USER': os.environ.get('DB_USER'),     # devuser
-        'PASSWORD': os.environ.get('DB_PASS'),  # changeme
-        'HOST': os.environ.get('DB_HOST'),     # db
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+USE_SQLITE_FOR_TESTS = os.getenv("USE_SQLITE_FOR_TESTS") == "1"
+
+if USE_SQLITE_FOR_TESTS:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME'),     # devdb
+            'USER': os.environ.get('DB_USER'),     # devuser
+            'PASSWORD': os.environ.get('DB_PASS'), # changeme
+            'HOST': os.environ.get('DB_HOST'),     # db
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            }
+        }
+    }
+
 
 
 

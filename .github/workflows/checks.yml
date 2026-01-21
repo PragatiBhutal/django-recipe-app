@@ -5,6 +5,8 @@ on: [push]
 jobs:
   test-lint:
     runs-on: ubuntu-24.04
+    env:
+      USE_SQLITE_FOR_TESTS: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
