@@ -17,12 +17,13 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
-      - USE_SQLITE_FOR_TESTS=1
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - dev-db-data:/var/lib/mysql
     environment:
@@ -30,6 +31,11 @@ services:
       - MYSQL_USER=devuser
       - MYSQL_PASSWORD=changeme
       - MYSQL_ROOT_PASSWORD=rootpass
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   dev-db-data:
